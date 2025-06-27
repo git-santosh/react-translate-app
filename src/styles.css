@@ -1,6 +1,16 @@
 /* src/styles.css */
+@import url("https://fonts.googleapis.com/css2?family=Mali&display=swap");
+
+html {
+  min-height: 100vh;
+}
+
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f0f0f0;
-  }
-  
+  min-height: 100vh;
+  background-color: #9fc4a5;
+  font-family: "Mali", sans-serif;
+  color: white !important;
+}
+.container {
+  margin: 10px 20px;
+}
