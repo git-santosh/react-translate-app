@@ -22,6 +22,7 @@ npm install react react-dom
 npm install --save-dev webpack webpack-cli webpack-dev-server
 npm install --save-dev babel-loader @babel/core @babel/preset-env @babel/preset-react
 npm install --save-dev html-webpack-plugin
+npm install --save-dev copy-webpack-plugin
 
 // Add CSS Support
 npm install --save-dev style-loader css-loader
@@ -96,6 +97,7 @@ npm run lint
 ```
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/index.jsx',
@@ -125,7 +127,12 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html'
-    })
+    }),
+    new CopyWebpackPlugin({
+    patterns: [
+      { from: 'public', to: '.' }
+    ]
+  })
   ]
 };
 
@@ -180,3 +187,48 @@ root.render(<App />);
 
 ```
 ### `npm start`
+
+as we are using manual React setups, where CRA placeholders like %PUBLIC_URL% don’t work automatically.
+```
+<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+```
+replace with this 
+```
+<link rel="manifest" href="/manifest.json" />
+```
+And ensure manifest.json is actually present in your public/ folder.
+
+This is because %PUBLIC_URL% is a placeholder used only by Create React App, not Webpack or raw HTML.
+In your custom setup, Webpack won’t replace %PUBLIC_URL%, so it literally tries to load:
+```
+http://localhost:3000/%PUBLIC_URL%/manifest.json
+
+```
+### How to Serve It Correctly with Webpack
+If you're using HtmlWebpackPlugin and a public folder:
+#### Add manifest.json to public/manifest.json
+```
+{
+  "short_name": "App",
+  "name": "React Manual App",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
+```
+### Then tell Webpack to serve public/ as static assets:
+In webpack.config.js, add:
+```
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+plugins: [
+  new HtmlWebpackPlugin({ template: './public/index.html' }),
+  new CopyWebpackPlugin({
+    patterns: [
+      { from: 'public', to: '.' }
+    ]
+  })
+]
+```
+`npm install --save-dev copy-webpack-plugin`

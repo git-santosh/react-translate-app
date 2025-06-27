@@ -16,6 +16,8 @@ const root = createRoot(el);
 // 4) Show the component on the screen
 root.render(
     <StrictMode>
-        <App />
+        <div className="wrapper">
+            <App />
+        </div>
     </StrictMode>
 );
